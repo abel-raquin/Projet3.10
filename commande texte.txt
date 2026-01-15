@@ -1,0 +1,84 @@
+TEST : d
+
+Étape 1 : La Sauvegarde (Dans le Terminal Windows)
+
+cd C:\wamp64\bin\mariadb\mariadb11.4.9\bin
+
+mysqldump -u root -p GestionStock > backup_oral.sql
+
+
+
+Étape 2 : supprimé ( phpMyAdmin)
+
+SQL
+
+DROP TABLE User;
+
+
+
+Étape 3 : La Restauration (Dans le Terminal Windows)
+
+cd C:\wamp64\bin\mariadb\mariadb11.4.9\bin
+
+mysql -u root -p GestionStock < backup_oral.sql
+
+
+
+
+
+
+
+
+
+Requête 1 : Nombre de produits par type (GROUP BY)
+SELECT t.libelle, COUNT(p.id) as qte
+FROM TypeProduit t
+JOIN Produit p ON t.id = p.type_id
+GROUP BY t.libelle;
+
+Requête 2 : Totaux et Min/Max (SUM, MIN, MAX)
+SELECT 
+    SUM(stock * prix) as valeur_stock,
+    MIN(prix) as prix_min,
+    MAX(prix) as prix_max
+FROM Produit;
+
+Requête 3 : Le produit le plus cher par type (Sous-requête)
+SELECT t.libelle, p.nom, p.prix
+FROM Produit p
+JOIN TypeProduit t ON p.type_id = t.id
+WHERE p.prix = (
+    SELECT MAX(p2.prix) 
+    FROM Produit p2 
+    WHERE p2.type_id = t.id
+);
+
+
+
+
+
+Avec l'utilisateur api_user
+Connection : api_user / Mot de passe : apiPass!
+
+(MARCHER) :
+
+UPDATE Produit SET stock = 5 WHERE id = 1;
+Coller (DOIT ÉCHOUER - Rouge) :
+
+
+ALTER TABLE Produit DROP COLUMN prix;
+
+
+
+l'utilisateur lecteur
+Connection : lecteur / Mot de passe : lecteurPass!
+
+Coller (DOIT MARCHER) :
+
+SQL
+	 	
+Coller (DOIT ÉCHOUER) :
+
+SQL
+
+INSERT INTO Produit (nom, prix) VALUES ('Test Interdit', 0);
